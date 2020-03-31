@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import axios from 'axios'
 import {XYPlot, XAxis, YAxis, HorizontalGridLines, LineSeries, DiscreteColorLegend} from 'react-vis';
 import '../node_modules/react-vis/dist/style.css';
 
@@ -8,6 +9,15 @@ function Chart(props) {
   const [bytes_fs_data, setBytesFsData] = useState([{x:0, y:0}])
 
   useEffect(()=>{
+    if (props.isSidebarSelect) {
+	axios.get(`http://localhost:5000/device/${props.selectedDeviceId}?window_time=60&end_time=1524835945&num_windows=10`)
+	.then(res => {
+	  console.log(res)
+	  props.setCurrentDeviceData(res.data)
+	})
+      props.setIsSidebarSelect(false)
+    }
+
     renderChartData(props)
   }, [props])
 

@@ -2,6 +2,7 @@ from app.extensions import application as app
 from flask import request, abort
 from sqlalchemy.sql import func
 from app.data.models.bandwidth import Bandwidth
+from app.data.models.device import Device
 import time
 import json
 
@@ -28,7 +29,7 @@ def get_device_by_id(device_id):
     """Returns a list of Bandwidth objects based on a `device_id`"""
 
     args = request.args
-
+    print(device_id)
     window_time = (
         60 if not args.get("window_time") else int(args.get("window_time"))
     )
@@ -91,3 +92,9 @@ def get_device_by_id(device_id):
             aggregate_bw.bytes_fs += bw.bytes_fs
         interval_map[key] = aggregate_bw.serialize
     return interval_map
+
+
+@app.route("/devices", methods=["GET"])
+def get_all_devices():
+    _all_devices = Device.query.all()
+    return json.dumps([d.serialize for d in _all_devices])
